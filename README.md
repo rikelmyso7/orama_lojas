@@ -32,4 +32,8 @@ Aplicativo Flutter desenvolvido para registrar o estoque de produtos na loja pel
 
 ---
 
+## Screenshots do projeto
+
+---![Component 2](https://github.com/user-attachments/assets/997e335d-7af4-4cb3-9ebe-98bc7acfd177)
+
 ### Programa desenvolvido para a Orama Brasil no intuito de descartar relatórios feitos em papeis e facilitar a comunicação entre o PDV e Fábrica, facilitando a organização e supervisionamento da equipe.
