@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:orama_lojas/pages/checklist/add_checklist_page.dart';
+import 'package:orama_lojas/pages/checklist/checklist_page.dart';
+import 'package:orama_lojas/pages/checklist/checklist_select_page.dart';
 import 'package:orama_lojas/routes/routes.dart';
 import 'package:orama_lojas/stores/stock_store.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +42,8 @@ class _MenuState extends State<Menu> {
       "h0g6nwqiRKcM3VSFk6Wu4JFWe9k2": "Orama Paineiras",
       "gwYkGevTSZUuGpMQsKLQSlFHZpm2": "Orama Itupeva",
       "VNlSNV0SKEOACk9Cxcxwe4E2Rtm2": "Orama Retiro",
-      "NQ9PFI86vvaWmQqARzygTylxqzh1": "Platz"
+      "NQ9PFI86vvaWmQqARzygTylxqzh1": "Platz",
+      "pkphd3pmn4MQSGQNJx0DPeWr9m52": "Orama Mercadao",
     };
 
     setState(() {
@@ -76,7 +80,7 @@ class _MenuState extends State<Menu> {
           ),
         ),
         ListTile(
-          title: Row(
+          title: const Row(
             children: [
               Text(
                 'Relatórios',
@@ -94,27 +98,32 @@ class _MenuState extends State<Menu> {
           },
         ),
         Divider(),
-        // ListTile(
-        //   title: Row(
-        //     children: [
-        //       Text(
-        //         'Específico',
-        //         style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
-        //       ),
-        //       SizedBox(width: 5),
-        //       FaIcon(
-        //         FontAwesomeIcons.solidPenToSquare,
-        //         size: 20,
-        //       ),
-        //     ],
-        //   ),
-        //   onTap: () {
-        //     Navigator.of(context).pushNamed(RouteName.especifico_view);
-        //   },
-        // ),
-        // Divider(),
         ListTile(
-          title: Row(
+          title: const Row(
+            children: [
+              Text(
+                'Checklist Diário',
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+              ),
+              SizedBox(width: 5),
+              FaIcon(
+                FontAwesomeIcons.solidPenToSquare,
+                size: 20,
+              ),
+            ],
+          ),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ChecklistPage(
+                          storeName: storeName,
+                        )));
+          },
+        ),
+        Divider(),
+        ListTile(
+          title: const Row(
             children: [
               Text(
                 'Trocar Conta',

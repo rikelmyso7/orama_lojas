@@ -219,7 +219,7 @@ const Map<String, List<Map<String, dynamic>>> insumos = {
     {"nome": "CHOCOLATE BRANCO", "minimo": "", 'tipo': '-'},
     {"nome": "CREME DE CAJU C/ CHOCOLATE", "minimo": "", 'tipo': '-'},
   ],
-  'ÁGUA': [
+  'BEBIDAS': [
     {"nome": "ÁGUA COM GÁS", "minimo": "1", 'tipo': 'Fardo'},
     {"nome": "ÁGUA SEM GÁS", "minimo": "1", 'tipo': 'Fardo'},
   ],

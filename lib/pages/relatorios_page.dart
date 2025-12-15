@@ -9,13 +9,13 @@ import 'package:intl/intl.dart';
 import 'package:orama_lojas/pages/DataView_page.dart';
 import 'package:orama_lojas/pages/add_rel_info.dart';
 import 'package:orama_lojas/pages/editarRelatorio_page.dart';
-import 'package:orama_lojas/pages/especific_page/DataEspecificoView.dart';
-import 'package:orama_lojas/pages/teste.dart';
+import 'package:orama_lojas/services/update_service.dart';
 import 'package:orama_lojas/utils/exit_dialog_utils.dart';
+import 'package:orama_lojas/utils/show_update_dialogs_util.dart';
 import 'package:orama_lojas/widgets/my_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:orama_lojas/stores/stock_store.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:orama_lojas/utils/gerar_romaneio.dart';
 
 class RelatoriosPage extends StatefulWidget {
   @override
@@ -29,6 +29,25 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
     final store = Provider.of<StockStore>(context, listen: false);
     store.fetchReports();
     validateAndSyncUserId();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 5), () {
+        if (mounted) _checkForUpdate();
+      });
+    });
+  }
+
+  Future<void> _checkForUpdate() async {
+    final updateInfo = await UpdateService.checkForUpdate();
+    if (updateInfo != null && mounted) {
+      UpdateDialog.show(
+        context: context,
+        title: updateInfo.title,
+        message: updateInfo.message,
+        apkUrl: updateInfo.apkUrl,
+        color: const Color(0xff60C03D),
+      );
+    }
   }
 
   String getStoreName() {
@@ -41,6 +60,8 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
         return "Orama Itupeva";
       case "VNlSNV0SKEOACk9Cxcxwe4E2Rtm2":
         return "Orama Retiro";
+      case "pkphd3pmn4MQSGQNJx0DPeWr9m52":
+        return "Orama Mercadao";
       case "NQ9PFI86vvaWmQqARzygTylxqzh1":
         return "Platz";
       default:
@@ -59,6 +80,8 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
         return "Jundiaí";
       case "NQ9PFI86vvaWmQqARzygTylxqzh1":
         return "Campinas";
+      case "pkphd3pmn4MQSGQNJx0DPeWr9m52":
+        return "São Paulo";
       default:
         return "";
     }
@@ -117,8 +140,8 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                   : null,
               title: const Text(
                 "Relatórios",
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.w500),
               ),
               backgroundColor: const Color(0xff60C03D),
             ),
@@ -131,14 +154,12 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                     child: Observer(
                       builder: (_) {
                         if (store.isLoading) {
-                          // Exibe um indicador de carregamento
                           return Center(
                             child: CircularProgressIndicator(),
                           );
                         }
 
                         if (store.reports.isEmpty) {
-                          // store.fetchReports();
                           return Center(
                               child: Text("Nenhum relatório disponível"));
                         }
@@ -146,7 +167,8 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                           itemCount: store.reports.length,
                           itemBuilder: (context, index) {
                             final sortedReports =
-                                List<Map<String, dynamic>>.from(store.reports)
+                                List<Map<String, dynamic>>.from(
+                                    store.reports)
                                   ..sort((a, b) {
                                     final dateFormat =
                                         DateFormat('dd/MM/yyyy HH:mm');
@@ -156,8 +178,8 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                                     final dateB = b['Data'] != null
                                         ? dateFormat.parse(b['Data'], true)
                                         : DateTime(0);
-                                    return dateB
-                                        .compareTo(dateA); // Ordem decrescente
+                                    return dateB.compareTo(
+                                        dateA);
                                   });
 
                             final report = sortedReports[index];
@@ -179,7 +201,8 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                             }
 
                             final dayOfWeek = parsedDate != null
-                                ? DateFormat('EEEE', 'pt_BR').format(parsedDate)
+                                ? DateFormat('EEEE', 'pt_BR')
+                                    .format(parsedDate)
                                 : '';
 
                             return Card(
@@ -191,7 +214,8 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
                                   children: [
                                     Row(
                                       mainAxisAlignment:
@@ -217,7 +241,8 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                                                       city: cidade,
                                                       loja: loja,
                                                       reportData: report,
-                                                      reportId: report['ID'],
+                                                      reportId:
+                                                          report['ID'],
                                                       tipo_relatorio:
                                                           'Relatório Geral',
                                                     ),
@@ -228,13 +253,16 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                                             ),
                                             IconButton(
                                               onPressed: () async {
-                                                final message = store
-                                                    .formatRelatorioForWhatsApp(
-                                                        report);
-                                                await Share.share(message);
+                                                try {
+                                                  final caminho = await gerarRomaneioPDF(context, report);
+                                                } catch (e) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(content: Text("Erro ao compartilhar: $e")),
+                                                  );
+                                                }
                                               },
-                                              icon: FaIcon(
-                                                  FontAwesomeIcons.whatsapp),
+                                              icon: FaIcon(FontAwesomeIcons
+                                                  .whatsapp),
                                             ),
                                             IconButton(
                                               onPressed: () {
@@ -247,7 +275,8 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                                                   ),
                                                 );
                                               },
-                                              icon: Icon(Icons.remove_red_eye),
+                                              icon: Icon(
+                                                  Icons.remove_red_eye),
                                             ),
                                           ],
                                         ),

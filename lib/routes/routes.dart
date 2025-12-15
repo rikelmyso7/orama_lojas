@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:orama_lojas/auth/authStateSwitcher.dart';
 import 'package:orama_lojas/main.dart';
-import 'package:orama_lojas/pages/especific_page/add_especifco_info.dart';
+import 'package:orama_lojas/pages/checklist/add_checklist_page.dart';
+import 'package:orama_lojas/pages/checklist/checklist_select_page.dart';
 import 'package:orama_lojas/pages/add_rel_info.dart';
-import 'package:orama_lojas/pages/especific_page/especifico_relatorio_page.dart';
-import 'package:orama_lojas/pages/especific_page/especifico_view_page.dart';
 import 'package:orama_lojas/pages/formulario_page.dart';
 import 'package:orama_lojas/pages/login_page.dart';
 import 'package:orama_lojas/pages/relatorios_page.dart';
@@ -17,9 +16,8 @@ class RouteName {
   static const relatorios = "relatorios";
   static const home = "/home";
   static const add_info = "/add_info";
-  static const add_especifico_info = "/add_especifico_info";
-  static const especifico = "/especifico";
-  static const especifico_view = "/especifico_view";
+  static const add_checklist_info = "/add_checklist_info";
+  static const add_checklist = "/add_checklist";
 }
 
 class Routes {
@@ -48,25 +46,15 @@ class Routes {
     RouteName.relatorios: (BuildContext context) {
       return RelatoriosPage();
     },
-    RouteName.add_info: (BuildContext context) {
-      return AddRelatorioInfo();
-    },
-    RouteName.add_especifico_info: (BuildContext context) {
-      return AddEspecificoInfo();
-    },
-    RouteName.especifico: (BuildContext context) {
-      return EspecificoRelatorioPage(
-        nome: '',
-        data: '',
-        reportData: {},
-        city: '',
-        loja: '',
-        reportId: '',
-        tipo_relatorio: '',
+    RouteName.add_checklist: (BuildContext context) {
+      return ChecklistSelectPage(
+        storeName: '',
+        periodo: '',
+        funcionario: '',
       );
     },
-    RouteName.especifico_view: (BuildContext context) {
-      return EspecificoViewPage();
+    RouteName.add_checklist_info: (BuildContext context) {
+      return AddChecklistPage();
     },
   };
 }

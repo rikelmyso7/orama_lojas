@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Este path irá permitir acesso aos arquivos na raiz do diretório de armazenamento externo do aplicativo -->
+    <!-- Diretório de armazenamento externo do aplicativo -->
     <external-path
         name="external_files"
+        path="." />
+
+    <!-- Diretório de arquivos internos do aplicativo (Context.getFilesDir()) -->
+    <files-path
+        name="app_files"
+        path="." />
+
+    <!-- Diretório de cache interno do aplicativo (Context.getCacheDir()) -->
+    <cache-path
+        name="app_cache"
         path="." />
 </paths>

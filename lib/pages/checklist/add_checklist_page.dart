@@ -1,38 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:orama_lojas/main.dart';
 import 'package:orama_lojas/others/field_validators.dart';
+import 'package:orama_lojas/pages/checklist/checklist_select_page.dart';
 import 'package:orama_lojas/pages/formulario_page.dart';
 import 'package:orama_lojas/stores/stock_store.dart';
 import 'package:orama_lojas/widgets/my_button.dart';
+import 'package:orama_lojas/widgets/my_dropdown.dart';
 import 'package:orama_lojas/widgets/my_textfield.dart';
 import 'package:provider/provider.dart';
 
-class AddRelatorioInfo extends StatefulWidget {
+class AddChecklistPage extends StatefulWidget {
   @override
-  _AddRelatorioInfoState createState() => _AddRelatorioInfoState();
+  _AddChecklistPageState createState() => _AddChecklistPageState();
 }
 
-class _AddRelatorioInfoState extends State<AddRelatorioInfo> {
-  final TextEditingController _nameController = TextEditingController();
+class _AddChecklistPageState extends State<AddChecklistPage> {
   final formKey = GlobalKey<FormState>();
   final ValueNotifier<bool> isFormValid = ValueNotifier<bool>(false);
 
+  String? _funcionarioSelecionado;
+  String? _periodoSelecionado;
+  DateTime _date = DateTime.now();
+  List<String> _funcionarios = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFuncionarios();
+  }
+
+  /// Obter nome da loja de acordo com o userId
   String getStoreName() {
     final userId = GetStorage().read('userId');
-
     switch (userId) {
       case "h0g6nwqiRKcM3VSFk6Wu4JFWe9k2":
-        return "Orama Paineiras";
+        return "paineiras";
       case "gwYkGevTSZUuGpMQsKLQSlFHZpm2":
-        return "Orama Itupeva";
+        return "itupeva";
       case "VNlSNV0SKEOACk9Cxcxwe4E2Rtm2":
-        return "Orama Retiro";
-      case "pkphd3pmn4MQSGQNJx0DPeWr9m52":
-        return "Orama Mercadao";
+        return "retiro";
       case "NQ9PFI86vvaWmQqARzygTylxqzh1":
-        return "Platz";
+        return "platz";
       default:
         return "Loja";
     }
@@ -49,46 +60,51 @@ class _AddRelatorioInfoState extends State<AddRelatorioInfo> {
         return "Jundiaí";
       case "NQ9PFI86vvaWmQqARzygTylxqzh1":
         return "Campinas";
-      case "pkphd3pmn4MQSGQNJx0DPeWr9m52":
-        return "São Paulo";
       default:
         return "";
     }
   }
 
-  String? periodoSelecionado;
+  Future<void> _loadFuncionarios() async {
+    final storeName = getStoreName();
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('funcionarios')
+          .doc(storeName)
+          .get();
 
-  DateTime _date = DateTime.now();
+      if (doc.exists && doc.data() != null) {
+        final data = doc.data() as Map<String, dynamic>;
+        final list = data['name']; // pega o array de funcionários
 
-  @override
-  void initState() {
-    super.initState();
-    _nameController.addListener(_validateForm);
-  }
-
-  @override
-  void dispose() {
-    _nameController.removeListener(_validateForm);
-    _nameController.dispose();
-    isFormValid.dispose();
-    super.dispose();
+        if (list is List) {
+          setState(() {
+            _funcionarios = List<String>.from(list);
+          });
+        } else {
+          debugPrint('Campo "name" não é uma lista');
+        }
+      }
+    } catch (e) {
+      debugPrint('Erro ao buscar funcionários: $e');
+    }
   }
 
   void _validateForm() {
-    isFormValid.value = _nameController.text.isNotEmpty;
+    isFormValid.value =
+        _funcionarioSelecionado != null && _periodoSelecionado != null;
   }
 
   @override
   Widget build(BuildContext context) {
-    final city = cidade();
     final storeName = getStoreName();
-    final store = Provider.of<StockStore>(context);
+    final city = cidade();
 
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          "Novo Relatório",
+          "Novo Checklist",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         ),
         elevation: 4,
@@ -98,22 +114,42 @@ class _AddRelatorioInfoState extends State<AddRelatorioInfo> {
       body: Center(
         child: SafeArea(
           child: Container(
+            // padding: const EdgeInsets.all(16),
             height: MediaQuery.of(context).size.height / 2,
             child: Form(
               key: formKey,
               child: Column(
                 children: [
-                  MyTextField(
-                    controller: _nameController,
-                    hintText: 'Seu Nome',
-                    validator: FieldValidators.validateName,
+                  // dropdown de funcionário
+                  MyDropDownButton(
+                    hint: "Selecione o Funcionário",
+                    options: _funcionarios,
+                    value: _funcionarioSelecionado,
+                    onChanged: (val) {
+                      setState(() {
+                        _funcionarioSelecionado = val;
+                      });
+                      _validateForm();
+                    },
                   ),
-                  const SizedBox(
-                    height: 15,
+                  const SizedBox(height: 16),
+
+                  // dropdown de período
+                  MyDropDownButton(
+                    hint: "Selecione o Período",
+                    options: const ['ABERTURA', 'FECHAMENTO'],
+                    value: _periodoSelecionado,
+                    onChanged: (val) {
+                      setState(() {
+                        _periodoSelecionado = val;
+                      });
+                      _validateForm();
+                    },
                   ),
+                  const SizedBox(height: 16),
                   ValueListenableBuilder<bool>(
                     valueListenable: isFormValid,
-                    builder: (context, isValid, child) {
+                    builder: (context, isValid, _) {
                       return MyButton(
                         buttonName: 'Próximo',
                         onTap: isValid
@@ -122,14 +158,7 @@ class _AddRelatorioInfoState extends State<AddRelatorioInfo> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => FormularioPage(
-                                        nome: _nameController.text,
-                                        data: _date.toIso8601String(),
-                                        loja: storeName,
-                                        reportData: null,
-                                        city: city,
-                                        tipo_relatorio: 'Relatório Geral',
-                                      ),
+                                      builder: (context) => ChecklistSelectPage(storeName: storeName, periodo: _periodoSelecionado, funcionario: _funcionarioSelecionado!,)
                                     ),
                                   );
                                 }
@@ -138,7 +167,7 @@ class _AddRelatorioInfoState extends State<AddRelatorioInfo> {
                         enabled: isValid,
                       );
                     },
-                  ),
+                  )
                 ],
               ),
             ),

@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:orama_lojas/services/stock_moviment.dart';
-import 'package:orama_lojas/services/stock_service.dart';
 import 'package:orama_lojas/utils/show_snackbar.dart';
 import 'package:uuid/uuid.dart';
 import 'package:orama_lojas/others/insumos.dart';
@@ -40,7 +38,6 @@ class _FormularioPageState extends State<FormularioPage> {
   bool isLoading = true;
   late Map<String, List<Map<String, dynamic>>> insumosFiltrados;
   List<String> categoriasVisiveis = [];
-  final StockService stockService = StockService();
 
   Future<void> _loadInsumosFromFirestore() async {
     try {
@@ -67,9 +64,10 @@ class _FormularioPageState extends State<FormularioPage> {
         parsedInsumos[categoria] = items;
       }
 
+      categoriasVisiveis = categorias;
+      insumosFiltrados = parsedInsumos;
+      _initializeFields();
       setState(() {
-        categoriasVisiveis = categorias;
-        insumosFiltrados = parsedInsumos;
         isLoading = false;
       });
     } catch (e) {
@@ -81,9 +79,7 @@ class _FormularioPageState extends State<FormularioPage> {
   @override
   void initState() {
     super.initState();
-    _loadInsumosFromFirestore().then((_) {
-      _initializeFields();
-    });
+    _loadInsumosFromFirestore();
   }
 
   void _initializeFields() {
@@ -121,7 +117,7 @@ class _FormularioPageState extends State<FormularioPage> {
       for (final item in insumosFiltrados[category]!) {
         final itemName = item['nome'];
         final key = _generateKey(category, itemName);
-        final defaultValue = item['minimo'].toString();
+        final defaultValue = (item['minimo'] ?? '0').toString();
 
         // Se o valor mínimo é uma fração, garantir um valor padrão válido
         final isFraction = defaultValue.contains('/');
@@ -146,7 +142,7 @@ class _FormularioPageState extends State<FormularioPage> {
 
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      ShowSnackBar(context, 'Usuário não autenticado!', Colors.green);
+      ShowSnackBar(context, 'Usuário não autenticado!', Colors.red);
       setState(() => isLoading = false);
       return;
     }
@@ -164,7 +160,7 @@ class _FormularioPageState extends State<FormularioPage> {
             ? '${category}_$itemName'
             : itemName;
         var quantidade = quantityControllers[key]?.text.trim() ?? '0';
-        final minimo = minControllers[key]?.text.trim() ?? item['minimo'];
+        final minimo = minControllers[key]?.text.trim() ?? (item['minimo'] ?? '0').toString();
 
         if (quantidade.isEmpty) {
           quantidade = '0';
@@ -199,36 +195,6 @@ class _FormularioPageState extends State<FormularioPage> {
           .doc(uuid)
           .set(report);
 
-      final List<StockMovement> movimentos = [];
-
-for (final categoria in categorias) {
-  final String categoriaNome = categoria['Categoria'] as String;
-  final List<dynamic> itens = categoria['Itens'] as List<dynamic>;
-
-  for (final item in itens) {
-    final String itemNome = item['Item'];
-    final String quantidadeStr = item['Quantidade']?.toString() ?? '0';
-    final double quantidade = double.tryParse(quantidadeStr.replaceAll(',', '.')) ?? 0;
-
-    if (quantidade <= 0) continue;
-
-    final String unidade = item['Tipo'] ?? '';
-
-    movimentos.add(StockMovement(
-      itemId: itemNome, // substitua por ID real se disponível
-      nome: itemNome,
-      quantidade: quantidade,
-      unidade: unidade,
-    ));
-  }
-}
-
-await stockService.registrarSaida(
-  destino: widget.loja,
-  movimentos: movimentos,
-);
-
-
       ShowSnackBar(context, 'Relatório salvo com sucesso!', Colors.green);
       Navigator.pushAndRemoveUntil(
         context,
@@ -236,7 +202,7 @@ await stockService.registrarSaida(
         (route) => false,
       );
     } catch (e) {
-      ShowSnackBar(context, 'Erro ao salvar relatório: $e', Colors.green);
+      ShowSnackBar(context, 'Erro ao salvar relatório: $e', Colors.red);
     } finally {
       setState(() => isLoading = false);
     }
@@ -310,7 +276,7 @@ await stockService.registrarSaida(
   Widget _buildItemCard(Map<String, dynamic> item, String key) {
     final itemName = item['nome'];
     final tipo = item['tipo'];
-    final defaultValue = item['minimo'].toString();
+    final defaultValue = (item['minimo'] ?? '0').toString();
     final isFraction = defaultValue.contains('/'); // Verifica se é uma fração
 
     return Card(

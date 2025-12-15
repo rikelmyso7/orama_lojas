@@ -11,8 +11,6 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  //final CheckUpdates checkUpdates = CheckUpdates();
-  //final FlutterAppInstaller flutterAppInstaller = FlutterAppInstaller();
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -55,18 +53,20 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SizedBox.expand(
-          child: FadeTransition(
-              opacity: _animation,
-              child: Container(
-                height: double.infinity,
-                width: double.infinity,
-                color: Color(0xff006764),
-                child: Center(
-                  child: Image.asset(
-                    'lib/assets/splashscreen.png',
-                  ),
-                ),
-              ))),
+        child: FadeTransition(
+          opacity: _animation,
+          child: Container(
+            height: double.infinity,
+            width: double.infinity,
+            color: const Color(0xff006764),
+            child: Center(
+              child: Image.asset(
+                'lib/assets/splashscreen.png',
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

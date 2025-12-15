@@ -5,7 +5,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:orama_lojas/others/insumos.dart';
-import 'package:orama_lojas/services/stock_service.dart';
 import 'package:uuid/uuid.dart';
 
 part 'stock_store.g.dart';
@@ -14,8 +13,6 @@ class StockStore = _StockStore with _$StockStore;
 
 abstract class _StockStore with Store {
   _StockStore() {}
-
-  final StockService stockService = StockService();
 
   @observable
   bool isLoading = false;

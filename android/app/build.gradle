@@ -44,9 +44,9 @@ android {
 
     defaultConfig {
         applicationId = "com.example.orama_lojas"
-        minSdk = 23
+        minSdkVersion = flutter.minSdkVersion
         targetSdk = 34
-        versionCode = flutterVersionCode.toInteger()
+        versionCode = 23
         versionName = flutterVersionName
     }
 
