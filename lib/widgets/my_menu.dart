@@ -126,6 +126,44 @@ class _MenuState extends State<Menu> {
           title: const Row(
             children: [
               Text(
+                'Cadastro de cliente',
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+              ),
+              SizedBox(width: 5),
+              FaIcon(
+                FontAwesomeIcons.userPlus,
+                size: 20,
+              ),
+            ],
+          ),
+          onTap: () {
+            Navigator.of(context).pushNamed(RouteName.cadastro_cliente);
+          },
+        ),
+        Divider(),
+        ListTile(
+          title: const Row(
+            children: [
+              Text(
+                'Sabores do Dia',
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+              ),
+              SizedBox(width: 5),
+              FaIcon(
+                FontAwesomeIcons.iceCream,
+                size: 20,
+              ),
+            ],
+          ),
+          onTap: () {
+            Navigator.of(context).pushNamed(RouteName.sabores_do_dia);
+          },
+        ),
+        Divider(),
+        ListTile(
+          title: const Row(
+            children: [
+              Text(
                 'Trocar Conta',
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
               ),

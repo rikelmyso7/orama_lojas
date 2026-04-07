@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:orama_lojas/auth/authStateSwitcher.dart';
-import 'package:orama_lojas/main.dart';
 import 'package:orama_lojas/pages/checklist/add_checklist_page.dart';
 import 'package:orama_lojas/pages/checklist/checklist_select_page.dart';
 import 'package:orama_lojas/pages/add_rel_info.dart';
+import 'package:orama_lojas/pages/cadastro_cliente_page.dart';
+import 'package:orama_lojas/pages/sabores_do_dia_page.dart';
 import 'package:orama_lojas/pages/formulario_page.dart';
 import 'package:orama_lojas/pages/login_page.dart';
 import 'package:orama_lojas/pages/relatorios_page.dart';
@@ -18,6 +19,8 @@ class RouteName {
   static const add_info = "/add_info";
   static const add_checklist_info = "/add_checklist_info";
   static const add_checklist = "/add_checklist";
+  static const cadastro_cliente = "/cadastro_cliente";
+  static const sabores_do_dia = "/sabores_do_dia";
 }
 
 class Routes {
@@ -31,6 +34,12 @@ class Routes {
     },
     RouteName.login: (BuildContext context) {
       return LoginPage();
+    },
+    RouteName.cadastro_cliente: (BuildContext context) {
+      return CadastroClientePage();
+    },
+    RouteName.sabores_do_dia: (BuildContext context) {
+      return SaboresDoDiaPage();
     },
     RouteName.home: (BuildContext context) {
       return FormularioPage(

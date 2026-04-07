@@ -1,7 +1,7 @@
 name: orama_lojas
 description: "Aplicativo Orama para as lojas"
 publish_to: 'none' 
-version: 3.0.6+1
+version: 3.0.7+1
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -45,6 +45,8 @@ dependencies:
   package_info_plus: ^8.3.0
   awesome_dialog: ^3.2.1
   url_launcher: ^6.3.1
+  googleapis: ^13.2.0
+  googleapis_auth: ^1.6.0
 
 dev_dependencies:
   flutter_test:
@@ -64,4 +66,5 @@ flutter:
   assets:
     - lib/assets/
     - shorebird.yaml
+    - assets/secrets/
   uses-material-design: true

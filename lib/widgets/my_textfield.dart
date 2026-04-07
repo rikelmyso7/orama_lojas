@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orama_lojas/widgets/my_textstyle.dart';
 
 class MyTextField extends StatelessWidget {
@@ -9,6 +10,7 @@ class MyTextField extends StatelessWidget {
   final Widget? icon;
   final Widget? prefixicon;
   final TextInputType? keyBordType;
+  final List<TextInputFormatter>? inputFormatters;
 
   const MyTextField({
     Key? key,
@@ -19,6 +21,7 @@ class MyTextField extends StatelessWidget {
     this.icon,
     this.keyBordType,
     this.prefixicon,
+    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -35,6 +38,7 @@ class MyTextField extends StatelessWidget {
               obscureText: obscureText,
               validator: validator,
               keyboardType: keyBordType,
+              inputFormatters: inputFormatters,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey.shade300),
