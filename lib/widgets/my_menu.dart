@@ -98,30 +98,30 @@ class _MenuState extends State<Menu> {
           },
         ),
         Divider(),
-        ListTile(
-          title: const Row(
-            children: [
-              Text(
-                'Checklist Diário',
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
-              ),
-              SizedBox(width: 5),
-              FaIcon(
-                FontAwesomeIcons.solidPenToSquare,
-                size: 20,
-              ),
-            ],
-          ),
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ChecklistPage(
-                          storeName: storeName,
-                        )));
-          },
-        ),
-        Divider(),
+        // ListTile(
+        //   title: const Row(
+        //     children: [
+        //       Text(
+        //         'Checklist Diário',
+        //         style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+        //       ),
+        //       SizedBox(width: 5),
+        //       FaIcon(
+        //         FontAwesomeIcons.solidPenToSquare,
+        //         size: 20,
+        //       ),
+        //     ],
+        //   ),
+        //   onTap: () {
+        //     Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //             builder: (context) => ChecklistPage(
+        //                   storeName: storeName,
+        //                 )));
+        //   },
+        // ),
+        // Divider(),
         ListTile(
           title: const Row(
             children: [
